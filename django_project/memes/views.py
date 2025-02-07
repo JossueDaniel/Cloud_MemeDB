@@ -19,14 +19,12 @@ def add_meme(request):
     if request.method == 'POST':
         meme_form = MemeForm(request.POST, request.FILES)
         formset = TagFormSet(request.POST)
-        print(f'Request: {request.POST}')
         if meme_form.is_valid() and formset.is_valid():
             meme = meme_form.save()
             tags = formset.save(commit=False)
             for tag in tags:
                 tag.meme_id = meme
                 tag.save()
-                print(f'Prueba: {tag}')
             formset.save_m2m()
             return redirect('home')
     else:
