@@ -1,5 +1,7 @@
 {% extends '_base.html' %}
-
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
 {% block content %}
 <div class="container mx-auto">
     <h1 class="text-xl font-bold underline text-center my-8">Agregar Meme</h1>
@@ -8,23 +10,74 @@
             {% csrf_token %}
             <div class="grid my-2 gap-2">
                 <label>Descripción</label>
-                {{ form.description }}
+                {{ meme_form.description }}
             </div>
             <div class="grid my-2 gap-2">
                 <label>Imagen</label>
-                {{ form.image }}
+                {{ meme_form.image }}
             </div>
             <div class="grid my-2 gap-2">
                 <label>Usuario</label>
-                {{ form.user }}
+                {{ meme_form.user }}
             </div>
+            <h3>Etiquetas</h3>
+            <div id="formset">
+                {{ formset.management_form }}
+                {% for form in formset %}
+                <div class="etiqueta-form">
+                    {{ form.as_p }}
+                    <span class="eliminar-btn">❌</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" id="agregar-etiqueta">+ Añadir otra etiqueta</button>
+            <br><br>
             <div class="flex gap-2 p-2 my-3">
                 <a href="{% url 'home' %}" class="rounded-lg bg-red-500 text-white p-2">
                     Cancelar
                 </a>
-                <input type="submit" class="rounded-lg bg-green-500 text-white p-2" value="Guardar">
+                <button type="submit" class="rounded-lg bg-green-500 text-white p-2">Guardar</button>
             </div>
         </form>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        let totalForms = $('#id_tags-TOTAL_FORMS');  // Controla el número total de formularios
+        let formsetDiv = $('#formset');
+        let formIndex = parseInt(totalForms.val());  // Asegurar que los índices inicien correctamente
+
+        $('#agregar-etiqueta').click(function () {
+            let newForm = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIndex);
+            formsetDiv.append('<div class="etiqueta-form">' + newForm + '<span class="eliminar-btn">❌</span></div>');
+
+            formIndex++;  // Incrementa el índice
+            totalForms.val(formIndex);  // Actualiza el total de formularios
+        });
+
+        $(document).on('click', '.eliminar-btn', function () {
+            $(this).closest('.etiqueta-form').remove();
+
+            // Reindexar los formularios después de eliminar
+            let index = 0;
+            $('.etiqueta-form').each(function () {
+                $(this).find('input, select, textarea').each(function () {
+                    let name = $(this).attr('name');
+                    let id = $(this).attr('id');
+
+                    if (name) {
+                        $(this).attr('name', name.replace(/-\d+-/, `-${index}-`));
+                    }
+                    if (id) {
+                        $(this).attr('id', id.replace(/-\d+-/, `-${index}-`));
+                    }
+                });
+                index++;
+            });
+
+            totalForms.val(index);  // Actualizar el número total de formularios
+        });
+    });
+</script>
 {% endblock content %}

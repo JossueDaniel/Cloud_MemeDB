@@ -1,6 +1,7 @@
 from django import forms
+from django.forms import inlineformset_factory
 
-from .models import Meme
+from .models import Meme, Tag
 
 class MemeForm(forms.ModelForm):
     class Meta:
@@ -19,3 +20,20 @@ class MemeForm(forms.ModelForm):
                 'class': 'form-input rounded-md border border-slate-600'
             })
         }
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ['tag']
+        widgets = {
+            'tag': forms.TextInput(attrs={
+                'class': 'form-input rounded-md border border-slate-600'
+            })
+        }
+TagFormSet = inlineformset_factory(
+    Meme,
+    Tag,
+    form=TagForm,
+    extra=1,
+    can_delete=True
+)
