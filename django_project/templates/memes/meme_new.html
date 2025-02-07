@@ -1,0 +1,30 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="container mx-auto">
+    <h1 class="text-xl font-bold underline text-center my-8">Agregar Meme</h1>
+    <div class="border border-slate-400 rounded-lg grid grid-cols-2 my-8 p-4">
+        <form method="post" class="space-y-2" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid my-2 gap-2">
+                <label>Descripción</label>
+                {{ form.description }}
+            </div>
+            <div class="grid my-2 gap-2">
+                <label>Imagen</label>
+                {{ form.image }}
+            </div>
+            <div class="grid my-2 gap-2">
+                <label>Usuario</label>
+                {{ form.user }}
+            </div>
+            <div class="flex gap-2 p-2 my-3">
+                <a href="{% url 'home' %}" class="rounded-lg bg-red-500 text-white p-2">
+                    Cancelar
+                </a>
+                <input type="submit" class="rounded-lg bg-green-500 text-white p-2" value="Guardar">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
