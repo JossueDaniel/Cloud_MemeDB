@@ -1,8 +1,10 @@
 from django.views.generic import ListView
 from django.shortcuts import render, redirect
+from django.db.models import Q
 
 from .models import Meme
 from .forms import MemeForm, TagFormSet
+
 
 # Create your views here.
 class HomeView(ListView):
@@ -36,3 +38,17 @@ def add_meme(request):
         'meme_form': meme_form,
         'formset': formset
     })
+
+
+class SearchResultsListView(ListView):
+    model = Meme
+    context_object_name = 'memes'
+    template_name = 'memes/search_results.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        if query:
+            return Meme.objects.filter(
+                Q(description__icontains=query)
+            )
+        return Meme.objects.none()

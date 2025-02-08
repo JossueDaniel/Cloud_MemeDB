@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="container mx-auto">
-    <h1 class="text-3xl font-bold underline text-center my-8">Cloud MemeDB</h1>
+    <h1 class="text-3xl font-bold underline text-center my-8">
+        <a href="{% url 'home' %}">Cloud MemeDB</a>
+    </h1>
     <div>
         <form action="{% url 'search_results' %}" method="get">
             <input
@@ -12,12 +14,12 @@
                     class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
         </form>
-        <div class="grid grid-cols-3 gap-3">
-            <div class="col-span-2">
+        <div class="">
+            <div class="grid grid-cols-3 gap-3">
                 {% for meme in memes %}
                 <div class="border border-slate-400 rounded-lg grid grid-cols-2 my-8 p-4">
                     <div class="flex justify-center">
-                        <img src="{{ meme.image.url }}" class="w-48">
+                        <img src="{{ meme.image.url }}" class="w-40 h-48">
                     </div>
                     <div>
                         <p class="text-slate-700 my-4 text-sm">{{ meme.uploaded_at }}</p>
@@ -33,16 +35,8 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="border border-slate-400 rounded-lg my-8 p-4">
-                <h2 class="font-bold">Agregar Meme</h2>
-                <div class="w-full my-3 grid">
-                    <a href="{% url 'meme_new' %}" class="rounded-lg bg-green-800 text-white p-2 text-center">
-                        Cargar meme
-                    </a>
-                </div>
-            </div>
         </div>
 
     </div>
 </div>
-{% endblock content %}
+{% endblock %}
