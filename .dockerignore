@@ -3,3 +3,6 @@
 .idea/
 .env
 db.sqlite3
+media/
+django_project/media/memes/
+django_project/data.json
