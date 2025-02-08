@@ -27,6 +27,8 @@ def add_meme(request):
                 tag.save()
             formset.save_m2m()
             return redirect('home')
+        else:
+            print(f'Errores en el formulario: {meme_form.errors}, {formset.errors}')
     else:
         meme_form = MemeForm()
         formset = TagFormSet()

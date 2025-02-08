@@ -3,31 +3,90 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 {% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .etiqueta-form {
+        display: inline-flex;
+        align-items: center;
+        background-color: #f1f1f1;
+        border-radius: 20px;
+        padding: 5px 10px;
+        margin: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .etiqueta-form input[type="text"] {
+        border: none;
+        background: transparent;
+        margin-right: 5px;
+        outline: none;
+        font-size: 14px;
+        width: auto;
+    }
+
+    .etiqueta-form .eliminar-btn {
+        background-color: transparent;
+        border: none;
+        color: #888;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+
+    .etiqueta-form .eliminar-btn:hover {
+        color: #f00;
+    }
+
+    #agregar-etiqueta {
+        display: inline-block;
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    #agregar-etiqueta:hover {
+        background-color: #0056b3;
+    }
+</style>
 <div class="container mx-auto">
     <h1 class="text-xl font-bold underline text-center my-8">Agregar Meme</h1>
-    <div class="border border-slate-400 rounded-lg grid grid-cols-2 my-8 p-4">
+    <div class="border border-slate-400 rounded-lg my-8 p-4">
         <form method="post" class="space-y-2" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="grid my-2 gap-2">
-                <label>Descripción</label>
+                <label class="font-semibold">Descripción</label>
                 {{ meme_form.description }}
             </div>
             <div class="grid my-2 gap-2">
-                <label>Imagen</label>
+                <label class="font-semibold">Imagen</label>
                 {{ meme_form.image }}
             </div>
             <div class="grid my-2 gap-2">
-                <label>Usuario</label>
+                <label class="font-semibold">Usuario</label>
                 {{ meme_form.user }}
             </div>
-            <h3>Etiquetas</h3>
+            <h3 class="font-semibold">Etiquetas</h3>
             <div id="formset">
                 {{ formset.management_form }}
                 {% for form in formset %}
                 <div class="etiqueta-form">
-                    {{ form.as_p }}
+                    {{ form.tag }}
                     <span class="eliminar-btn">❌</span>
                 </div>
+                {% if form.errors %}
+                <ul style="color: red;">
+                    {% for error in form.errors.values %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 {% endfor %}
             </div>
 
@@ -49,7 +108,7 @@
         let formIndex = parseInt(totalForms.val());  // Asegurar que los índices inicien correctamente
 
         $('#agregar-etiqueta').click(function () {
-            let newForm = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIndex);
+            let newForm = '{{ formset.empty_form.tag|escapejs }}'.replace(/__prefix__/g, formIndex);
             formsetDiv.append('<div class="etiqueta-form">' + newForm + '<span class="eliminar-btn">❌</span></div>');
 
             formIndex++;  // Incrementa el índice
