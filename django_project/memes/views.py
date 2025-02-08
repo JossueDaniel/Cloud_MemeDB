@@ -1,9 +1,11 @@
 from django.views.generic import ListView
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.conf import settings
 
 from .models import Meme, Tag
 from .forms import MemeForm, TagFormSet
+from .imagga import ImaggaService
 
 
 # Create your views here.
@@ -22,11 +24,19 @@ def add_meme(request):
         formset = TagFormSet(request.POST)
         if meme_form.is_valid() and formset.is_valid():
             meme = meme_form.save()
+            imagga = ImaggaService(settings.IMAGGA_API_KEY, settings.IMAGGA_API_SECRET)
+            print('Imagga Service: ', imagga.analyze_image(meme.image.path))
+
             tags = formset.save(commit=False)
+            tags_imagga = imagga.analyze_image(meme.image.path)
+
+            for tag_name, confidence in tags_imagga:
+                Tag.objects.create(meme_id=meme, tag=tag_name, confianza=confidence)
+
             for tag in tags:
                 tag.meme_id = meme
                 tag.save()
-            formset.save_m2m()
+
             return redirect('home')
         else:
             print(f'Errores en el formulario: {meme_form.errors}, {formset.errors}')

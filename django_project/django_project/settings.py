@@ -143,3 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media config
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Imagga config
+IMAGGA_API_KEY= os.getenv('IMAGGA_API_KEY')
+IMAGGA_API_SECRET= os.getenv('IMAGGA_API_SECRET')
