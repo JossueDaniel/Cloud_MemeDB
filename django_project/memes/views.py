@@ -2,7 +2,7 @@ from django.views.generic import ListView
 from django.shortcuts import render, redirect
 from django.db.models import Q
 
-from .models import Meme
+from .models import Meme, Tag
 from .forms import MemeForm, TagFormSet
 
 
@@ -47,8 +47,10 @@ class SearchResultsListView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
+
         if query:
             return Meme.objects.filter(
-                Q(description__icontains=query)
-            )
-        return Meme.objects.none()
+                Q(description__icontains=query) |
+                Q(id__in=Tag.objects.filter(tag__icontains=query).values_list('meme_id', flat=True))
+            ).distinct()
+        return Meme.objects.all()
